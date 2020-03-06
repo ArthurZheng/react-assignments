@@ -1,17 +1,18 @@
 {
-  "name": "react-assignments",
-  "version": "1.0.0",
-  "description": "repo to do React research and assignments",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "react"
-  ],
-  "author": "Jun",
-  "license": "ISC",
-  "dependencies": {
-    "sirv-cli": "^0.4.5"
-  }
+    "name": "react-assignments",
+    "version": "1.0.0",
+    "description": "repo to do React research and assignments",
+    "main": "index.js",
+    "scripts": {
+        "start": "sirv",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "react"
+    ],
+    "author": "Jun",
+    "license": "ISC",
+    "dependencies": {
+        "sirv-cli": "^0.4.5"
+    }
 }
