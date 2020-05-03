@@ -93,19 +93,8 @@
         text-align: center;
         color: white;
       }
-      
-      /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
-      @media (max-width: 600px) {
-        nav, article {
-          width: 100%;
-          height: auto;
-        }
-      }
       </style>
-
-
   </head>
-
   <body>
     <div id="app"></div>
 
@@ -138,36 +127,26 @@
       <p>Footer</p>
     </footer>
 
-
-
   </body>
   <script>
       var link = document.querySelector('h2 a');
       var sideNav = document.querySelector('nav');
       var bodySection = document.querySelector('body');
 
-      console.log('bodySection', bodySection);
-      console.log('link', link);
-      console.log('sideNav', sideNav);
-
       link.addEventListener('click', function(event){
-        console.log("link clicked");
         sideNav.style.display = 'block';
         event.preventDefault();
         event.stopPropagation();
       });
 
       sideNav.addEventListener('click', function(event){
-        console.log("side-nav clicked");
         event.stopPropagation();
       });
 
       bodySection.addEventListener('click', function(event){
-        console.log("body section clicked");
         sideNav.style.display = 'none';
         event.stopPropagation();
       })
-
 
   </script>
 </html>
