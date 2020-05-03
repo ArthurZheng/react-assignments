@@ -150,3 +150,163 @@ If one or more EventListeners call preventDefault during any phase of event flow
 
 
 
+======
+
+
+Node: V8 and Libuv: V8 is used to interpret and execute Javascript code, while libuv is used for accessing the filesystem and some aspects of concurrency.
+
+
+JS events
+
+1. event delegation: Event delegation allows you to avoid adding event listeners to specific nodes;  instead, the event listener is added to one parent.  That event listener analyzes bubbled events to find a match on child elements. Simple:  when the event bubbles up to the UL element, you check the event object's target property to gain a reference to the actual clicked node.  
+// Get the element, add a click listener...
+document.getElementById("parent-list").addEventListener("click", function(e) {
+	// e.target is the clicked element!
+	// If it was a list item
+	if(e.target && e.target.nodeName == "LI") {
+		// List item found!  Output the ID!
+		console.log("List item ", e.target.id.replace("post-", ""), " was clicked!");
+	}
+});
+
+
+// Get the parent DIV, add click listener...
+document.getElementById("myDiv").addEventListener("click",function(e) {
+	// e.target was the clicked element
+  if (e.target && e.target.matches("a.classA")) {
+    console.log("Anchor element clicked!");
+	}
+});
+
+
+
+2. event bubbling vs event capturing
+
+3. event propagation
+The stopPropagation() method of the Event interface prevents further propagation of the current event in the capturing and bubbling phases.
+
+4. event.preventDefault
+The Event interface's preventDefault() method tells the user agent that if the event does not get explicitly handled, its default action should not be taken as it normally would be. The event continues to propagate as usual, unless one of its event listeners calls stopPropagation() or stopImmediatePropagation(), either of which terminates propagation at once.
+
+As noted below, calling preventDefault() for a non-cancelable event, such as one dispatched via EventTarget.dispatchEvent(), without specifying cancelable: true has no effect.
+
+5. HTML5 built-in form validation
+Using built-in form validation
+One of the most significant features of HTML5 form controls is the ability to validate most user data without relying on JavaScript. This is done by using validation attributes on form elements. We've seen many of these earlier in the course, but to recap:
+
+required: Specifies whether a form field needs to be filled in before the form can be submitted.
+minlength and maxlength: Specifies the minimum and maximum length of textual data (strings)
+min and max: Specifies the minimum and maximum values of numerical input types
+type: Specifies whether the data needs to be a number, an email address, or some other specific preset type.
+pattern: Specifies a regular expression that defines a pattern the entered data needs to follow.
+
+
+// Add event listener to table
+const el = document.getElementById("outside");
+el.addEventListener("click", modifyText, false);
+
+useCapture Optional
+A Boolean indicating whether events of this type will be dispatched to the registered listener before being dispatched to any EventTarget beneath it in the DOM tree. 
+Events that are bubbling upward through the tree will not trigger a listener designated to use capture. Event bubbling and capturing are two ways of propagating events 
+which occur in an element that is nested within another element, when both elements have registered a handle for that event. 
+The event propagation mode determines the order in which elements receive the event. 
+See DOM Level 3 Events and JavaScript Event order for a detailed explanation. If not specified, useCapture defaults to false.
+
+
+
+==============
+event handler and event listener
+Each available event has an event handler, 
+which is a block of code (usually a JavaScript function that you as a programmer create) that will be run when the event fires. 
+When such a block of code is defined to be run in response to an event firing, we say we are registering an event handler. 
+Note that event handlers are sometimes called event listeners — they are pretty much interchangeable for our purposes, 
+although strictly speaking, they work together. The listener listens out for the event happening, and the handler is the code that is run in response to it happening.
+
+event.target
+Here you can see that we are including an event object, e, in the function, and in the function setting a background color style on e.target — which is the button itself. 
+The target property of the event object is always a reference to the element that the event has just occurred upon. 
+
+
+================
+
+Bubbling and capturing explained
+When an event is fired on an element that has parent elements (in this case, the <video> has the <div> as a parent), 
+modern browsers run two different phases — the capturing phase and the bubbling phase.
+
+In the capturing phase:
+
+The browser checks to see if the element's outer-most ancestor (<html>) has an onclick event handler registered on it for the capturing phase, and runs it if so.
+Then it moves on to the next element inside <html> and does the same thing, then the next one, and so on until it reaches the element that was actually clicked on.
+
+In the bubbling phase, the exact opposite occurs:
+
+The browser checks to see if the element that was actually clicked on has an onclick event handler registered on it for the bubbling phase, and runs it if so.
+Then it moves on to the next immediate ancestor element and does the same thing, then the next one, and so on until it reaches the <html> element.
+
+
+
+
+In modern browsers, by default, all event handlers are registered for the bubbling phase.
+
+Note: Why bother with both capturing and bubbling? Well, in the bad old days when browsers were much less cross-compatible than they are now, Netscape only used event capturing, and Internet Explorer used only event bubbling.
+When the W3C decided to try to standardize the behavior and reach a consensus, they ended up with this system that included both, which is the one modern browsers implemented.
+
+Note: As mentioned above, by default all event handlers are registered in the bubbling phase, and this makes more sense most of the time. If you really want to register an event in the capturing phase instead, 
+you can do so by registering your handler using addEventListener(), and setting the optional third property to true.
+
+
+
+The stopPropagation() method of the Event interface prevents further propagation of the current event in the capturing and bubbling phases.
+
+Additional Notes: It does not stop any default behaviours (such as link clicks). If want to stop default behaviours, see Event.preventDefault().
+
+
+Note: In cases where both types of event handlers are present, bubbling and capturing, the capturing phase will run first, followed by the bubbling phase.
+Brief description to demonstrate you understand event propagation:
+
+When an event is fired on an element that has parent elements, modern browsers run two different phases — the capturing phase and the bubbling phase.
+
+Event capturing
+When you use event capturing
+
+               | |
+---------------| |-----------------
+| element1     | |                |
+|   -----------| |-----------     |
+|   |element2  \ /          |     |
+|   -------------------------     |
+|        Event CAPTURING          |
+-----------------------------------
+the event handler of element1 fires first, the event handler of element2 fires last.
+
+
+Event bubbling
+When you use event bubbling
+
+               / \
+---------------| |-----------------
+| element1     | |                |
+|   -----------| |-----------     |
+|   |element2  | |          |     |
+|   -------------------------     |
+|        Event BUBBLING           |
+-----------------------------------
+the event handler of element2 fires first, the event handler of element1 fires last.
+
+
+However, in modern browsers, by default, all event handlers are registered for the bubbling phase. If you really want to register an event in the capturing phase instead, 
+you can do so by registering your handler using addEventListener(), and setting the optional third property to true.
+
+    i.e. const btn = document.querySelector('button');
+
+    function bgChange() {
+        const rndCol = 'rgb(' + random(255) + ',' + random(255) + ',' + random(255) + ')';
+        document.body.style.backgroundColor = rndCol;
+    }   
+
+    btn.addEventListener('click', bgChange, true);
+
+Most of the time, we don't want event to keep bubbling up or capturing down the DOM, we can use even.stopPropagation to prevent further propagation of the current event in the capturing and bubbling phases.
+
+The event.stopPropagation() method of the Event interface prevents further propagation of the current event in the capturing and bubbling phases.
+Additional Notes: It does not stop any default behaviours (such as link clicks). If want to stop default behaviours, use Event.preventDefault().
